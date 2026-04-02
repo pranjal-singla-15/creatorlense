@@ -12,6 +12,20 @@ function createToken(userId) {
   });
 }
 
+function serializeUser(user) {
+  return {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    brandName: user.brandName,
+    brandDescription: user.brandDescription,
+    brandWebsite: user.brandWebsite,
+    brandIndustry: user.brandIndustry,
+    brandLocation: user.brandLocation,
+    brandProfileCompleted: user.brandProfileCompleted,
+  };
+}
+
 router.post("/register", async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -30,11 +44,7 @@ router.post("/register", async (req, res, next) => {
     res.status(201).json({
       message: "User registered successfully",
       token: createToken(user._id),
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-      },
+      user: serializeUser(user),
     });
   } catch (error) {
     next(error);
@@ -64,11 +74,7 @@ router.post("/login", async (req, res, next) => {
     res.json({
       message: "Login successful",
       token: createToken(user._id),
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-      },
+      user: serializeUser(user),
     });
   } catch (error) {
     next(error);
@@ -83,7 +89,45 @@ router.get("/me", protect, async (req, res, next) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.json({ user });
+    res.json({ user: serializeUser(user) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/onboarding", protect, async (req, res, next) => {
+  try {
+    const {
+      brandName,
+      brandDescription,
+      brandWebsite,
+      brandIndustry,
+      brandLocation,
+    } = req.body;
+
+    if (!brandName || !brandDescription) {
+      return res.status(400).json({ message: "Brand name and description are required" });
+    }
+
+    const user = await User.findById(req.user.userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.brandName = brandName.trim();
+    user.brandDescription = brandDescription.trim();
+    user.brandWebsite = brandWebsite?.trim() || "";
+    user.brandIndustry = brandIndustry?.trim() || "";
+    user.brandLocation = brandLocation?.trim() || "";
+    user.brandProfileCompleted = true;
+
+    await user.save();
+
+    res.json({
+      message: "Brand profile saved",
+      user: serializeUser(user),
+    });
   } catch (error) {
     next(error);
   }

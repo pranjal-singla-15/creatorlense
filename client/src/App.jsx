@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import SignIn from "./pages/Sign_In";
+import BrandOnboarding from "./pages/Brand_Onboarding";
+import Dashboard from "./pages/Dashboard";
 import {
   FiBarChart2,
   FiGithub,
@@ -11,10 +13,25 @@ import {
 } from "react-icons/fi";
 
 export default function App() {
-  const [showSignIn, setShowSignIn] = useState(false);
+  const [view, setView] = useState("home");
 
-  if (showSignIn) {
-    return <SignIn onBack={() => setShowSignIn(false)} />;
+  if (view === "signin") {
+    return (
+      <SignIn
+        onBack={() => setView("home")}
+        onAfterAuth={({ needsOnboarding }) =>
+          setView(needsOnboarding ? "onboarding" : "dashboard")
+        }
+      />
+    );
+  }
+
+  if (view === "onboarding") {
+    return <BrandOnboarding onComplete={() => setView("dashboard")} />;
+  }
+
+  if (view === "dashboard") {
+    return <Dashboard />;
   }
 
   return (
@@ -56,7 +73,7 @@ export default function App() {
               </button>
               <button
                 type="button"
-                onClick={() => setShowSignIn(true)}
+                onClick={() => setView("signin")}
                 className="rounded-lg border border-white/60 bg-white/40 px-5 py-2 text-sm hover:bg-white/60"
               >
                 Sign In
@@ -94,7 +111,7 @@ export default function App() {
 
               <button
                 type="button"
-                onClick={() => setShowSignIn(true)}
+                onClick={() => setView("signin")}
                 className="rounded-xl border border-white/80 bg-white/60 px-8 py-4 backdrop-blur-md"
               >
                 Sign In
