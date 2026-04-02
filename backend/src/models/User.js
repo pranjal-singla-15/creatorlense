@@ -20,6 +20,30 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: 6,
     },
+    brandName: {
+      type: String,
+      trim: true,
+    },
+    brandDescription: {
+      type: String,
+      trim: true,
+    },
+    brandWebsite: {
+      type: String,
+      trim: true,
+    },
+    brandIndustry: {
+      type: String,
+      trim: true,
+    },
+    brandLocation: {
+      type: String,
+      trim: true,
+    },
+    brandProfileCompleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
