@@ -64,7 +64,7 @@ const BrandMark = ({ iconSize = 22 }) => (
   </div>
 );
 
-export default function SignIn({ onBack }) {
+export default function SignIn({ onBack, onAfterAuth }) {
   const [mode, setMode] = useState("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -86,7 +86,8 @@ export default function SignIn({ onBack }) {
       persistAuthSession(data);
       setMessage(authMode.successMessage);
       setMessageType("success");
-      window.setTimeout(() => onBack?.(), 800);
+      const needsOnboarding = !data?.user?.brandProfileCompleted;
+      window.setTimeout(() => onAfterAuth?.({ needsOnboarding }), 800);
     } catch (error) {
       setMessage(error.message || "Something went wrong");
       setMessageType("error");
