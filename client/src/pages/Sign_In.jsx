@@ -126,10 +126,6 @@ export default function SignIn({ onBack, onAfterAuth }) {
         {/* ── RIGHT PANEL ── */}
         <div style={styles.rightPanel}>
           <div style={styles.topRow}>
-            <div style={styles.brandRow}>
-              <BrandMark size={18} />
-              <span style={styles.brandText}>CreatorLens</span>
-            </div>
             <button type="button" onClick={() => onBack?.()} style={styles.backBtn}>
               Back to Home
             </button>
@@ -234,24 +230,6 @@ export default function SignIn({ onBack, onAfterAuth }) {
       </div>
 
       {/* ── BOTTOM LOGOS ── */}
-      <div style={styles.bottomLogos}>
-        <div style={styles.logoItem}>
-          <HubSpotLogo />
-          <span style={{ ...styles.logoName, color: "#FF7A59" }}>HubSpot</span>
-        </div>
-        <div style={styles.logoItem}>
-          <SpotifyLogo />
-          <span style={{ ...styles.logoName, color: "#1DB954" }}>Spotify</span>
-        </div>
-        <div style={styles.logoItem}>
-          <SalesforceLogo />
-          <span style={{ ...styles.logoName, color: "#00A1E0" }}>Salesforce</span>
-        </div>
-        <div style={styles.logoItem}>
-          <ShopifyLogo />
-          <span style={{ ...styles.logoName, color: "#96BF48" }}>Shopify</span>
-        </div>
-      </div>
     </div>
   );
 }

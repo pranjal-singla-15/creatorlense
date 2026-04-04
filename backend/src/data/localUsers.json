@@ -1,0 +1,16 @@
+[
+  {
+    "_id": "4c73330f-ebb4-47b4-8730-d9211e81914c",
+    "name": "pranjal",
+    "email": "pranjal@gmail.com",
+    "passwordHash": "$2a$10$MWzLqBNN/s2n1AUZM7q6IucdmYZose/ZGAV/cSZXuUFHT/DQSQrji",
+    "brandName": "",
+    "brandDescription": "",
+    "brandWebsite": "",
+    "brandIndustry": "",
+    "brandLocation": "",
+    "brandProfileCompleted": false,
+    "createdAt": "2026-04-03T19:14:57.231Z",
+    "updatedAt": "2026-04-03T19:14:57.361Z"
+  }
+]
