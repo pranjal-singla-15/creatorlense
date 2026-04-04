@@ -27,7 +27,12 @@ export default function App() {
   }
 
   if (view === "onboarding") {
-    return <BrandOnboarding onComplete={() => setView("dashboard")} />;
+    return (
+      <BrandOnboarding
+        onComplete={() => setView("dashboard")}
+        onBack={() => setView("home")}
+      />
+    );
   }
 
   if (view === "dashboard") {
