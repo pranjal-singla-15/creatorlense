@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar.jsx";
 import CreatorCard from "../components/CreatorCard.jsx";
-import InsightPanel from "../components/InsightPanel.jsx";
 import ReportList from "../components/ReportList.jsx";
 import SearchBar from "../components/SearchBar.jsx";
 import ChatbotWidget from "../components/ChatbotWidget.jsx";
@@ -84,12 +83,16 @@ const mockReports = [
 	},
 ];
 
-export default function Dashboard() {
+export default function Dashboard({ onInsightsReady, sessionId: initialSessionId = "" }) {
 	const [selectedCreator, setSelectedCreator] = useState(mockCreators[0]);
 	const [query, setQuery] = useState("");
 	const [insightStatus, setInsightStatus] = useState("idle");
 	const [insightError, setInsightError] = useState("");
-	const [sessionId, setSessionId] = useState("");
+	const [sessionId, setSessionId] = useState(initialSessionId);
+
+	useEffect(() => {
+		setSessionId(initialSessionId || "");
+	}, [initialSessionId]);
 
 	const filteredCreators = mockCreators.filter((creator) =>
 		creator.name.toLowerCase().includes(query.toLowerCase())
@@ -120,7 +123,8 @@ export default function Dashboard() {
 			}
 
 			const data = await response.json();
-			setSessionId(data?.session_id || "");
+			const nextSessionId = data?.session_id || "";
+			setSessionId(nextSessionId);
 			const analyzedCreator = data?.analyzed_creators?.[0];
 			const instagramScores = analyzedCreator?.instagram_insights?.scores;
 			const youtubeScores = analyzedCreator?.youtube_insights?.scores;
@@ -146,6 +150,13 @@ export default function Dashboard() {
 
 			setSelectedCreator(mappedCreator);
 			setInsightStatus("idle");
+			onInsightsReady?.({
+				creator: mappedCreator,
+				status: "idle",
+				error: "",
+				sessionId: nextSessionId,
+				query: trimmed,
+			});
 		} catch (error) {
 			setInsightStatus("error");
 			setInsightError(error?.message || "Unable to fetch insights.");
@@ -199,8 +210,6 @@ export default function Dashboard() {
 								))}
 							</div>
 						</div>
-
-						<InsightPanel creator={selectedCreator} status={insightStatus} error={insightError} />
 					</section>
 
 					<section className="mt-8">
@@ -222,12 +231,3 @@ function MetricCard({ label, value, delta, tone }) {
 		</div>
 	);
 }
-
-
-
-
-
-
-
-
-

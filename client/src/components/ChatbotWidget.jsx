@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-export default function ChatbotWidget({ sessionId, apiBaseUrl = "http://localhost:8000" }) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function ChatbotWidget({ sessionId, apiBaseUrl = "http://localhost:8000", variant = "floating" }) {
+  const [isOpen, setIsOpen] = useState(variant !== "floating");
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState([
@@ -53,60 +53,68 @@ export default function ChatbotWidget({ sessionId, apiBaseUrl = "http://localhos
     }
   };
 
+  const panel = (
+    <div className="flex h-full w-full flex-col overflow-hidden rounded-3xl border border-purple-100 bg-white shadow-xl">
+      <div className="flex items-center justify-between bg-gradient-to-r from-purple-500 to-indigo-500 px-4 py-3 text-white">
+        <div>
+          <p className="text-xs uppercase tracking-[0.2em] text-purple-100">Creator Copilot</p>
+          <p className="text-sm font-semibold">Ask anything</p>
+        </div>
+        {variant === "floating" && (
+          <button
+            type="button"
+            className="rounded-full bg-white/20 px-3 py-1 text-xs"
+            onClick={() => setIsOpen(false)}
+          >
+            Close
+          </button>
+        )}
+      </div>
+
+      <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3 text-sm text-slate-700">
+        {messages.map((message, index) => (
+          <div
+            key={`${message.role}-${index}`}
+            className={`rounded-2xl px-3 py-2 ${
+              message.role === "user"
+                ? "bg-purple-100 text-slate-800"
+                : "bg-slate-100 text-slate-700"
+            }`}
+          >
+            {message.text}
+          </div>
+        ))}
+        {isLoading && (
+          <div className="rounded-2xl bg-slate-100 px-3 py-2 text-slate-500">Thinking...</div>
+        )}
+      </div>
+
+      <form onSubmit={handleSend} className="flex gap-2 border-t border-purple-100 px-3 py-3">
+        <input
+          type="text"
+          value={input}
+          onChange={(event) => setInput(event.target.value)}
+          placeholder="Ask about engagement, ROI, or comparisons..."
+          className="flex-1 rounded-2xl border border-purple-100 px-3 py-2 text-sm text-slate-700 outline-none"
+        />
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="rounded-2xl bg-purple-500 px-4 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          Send
+        </button>
+      </form>
+    </div>
+  );
+
+  if (variant !== "floating") {
+    return panel;
+  }
+
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      {isOpen && (
-        <div className="mb-3 w-80 overflow-hidden rounded-3xl border border-purple-100 bg-white shadow-xl">
-          <div className="flex items-center justify-between bg-gradient-to-r from-purple-500 to-indigo-500 px-4 py-3 text-white">
-            <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-purple-100">Creator Copilot</p>
-              <p className="text-sm font-semibold">Ask anything</p>
-            </div>
-            <button
-              type="button"
-              className="rounded-full bg-white/20 px-3 py-1 text-xs"
-              onClick={() => setIsOpen(false)}
-            >
-              Close
-            </button>
-          </div>
-
-          <div className="max-h-64 space-y-3 overflow-y-auto px-4 py-3 text-sm text-slate-700">
-            {messages.map((message, index) => (
-              <div
-                key={`${message.role}-${index}`}
-                className={`rounded-2xl px-3 py-2 ${
-                  message.role === "user"
-                    ? "bg-purple-100 text-slate-800"
-                    : "bg-slate-100 text-slate-700"
-                }`}
-              >
-                {message.text}
-              </div>
-            ))}
-            {isLoading && (
-              <div className="rounded-2xl bg-slate-100 px-3 py-2 text-slate-500">Thinking...</div>
-            )}
-          </div>
-
-          <form onSubmit={handleSend} className="flex gap-2 border-t border-purple-100 px-3 py-3">
-            <input
-              type="text"
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              placeholder="Ask about engagement, ROI, or comparisons..."
-              className="flex-1 rounded-2xl border border-purple-100 px-3 py-2 text-sm text-slate-700 outline-none"
-            />
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="rounded-2xl bg-purple-500 px-4 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              Send
-            </button>
-          </form>
-        </div>
-      )}
+      {isOpen && <div className="mb-3 w-80">{panel}</div>}
 
       <button
         type="button"

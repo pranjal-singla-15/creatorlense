@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import SignIn from "./pages/Sign_In";
 import BrandOnboarding from "./pages/Brand_Onboarding";
 import Dashboard from "./pages/Dashboard";
+import Insights from "./pages/Insights";
 import {
   FiBarChart2,
   FiGithub,
@@ -14,6 +15,13 @@ import {
 
 export default function App() {
   const [view, setView] = useState("home");
+  const [insightsPayload, setInsightsPayload] = useState({
+    creator: null,
+    status: "idle",
+    error: "",
+    sessionId: "",
+    query: "",
+  });
 
   if (view === "signin") {
     return (
@@ -31,7 +39,28 @@ export default function App() {
   }
 
   if (view === "dashboard") {
-    return <Dashboard />;
+    return (
+      <Dashboard
+        sessionId={insightsPayload.sessionId}
+        onInsightsReady={(payload) => {
+          setInsightsPayload(payload);
+          setView("insights");
+        }}
+      />
+    );
+  }
+
+  if (view === "insights") {
+    return (
+      <Insights
+        creator={insightsPayload.creator}
+        status={insightsPayload.status}
+        error={insightsPayload.error}
+        query={insightsPayload.query}
+        sessionId={insightsPayload.sessionId}
+        onBack={() => setView("dashboard")}
+      />
+    );
   }
 
   return (
